@@ -116,6 +116,49 @@ $$\Delta_i (\alpha_i^{(t-1)}, w^{(t-1)}) = y_i \max \left ( 0, \min \left ( 1, \
 
 \subsection{SGD initialization}
 
+It is advised in \cite{1} to implement a different algorithm based on a modification of stochastic subgradient descent (SGD) just for the first epoch and then to switch back to SDCA. This is useful because SDCA tends to result in updates that are too small in the first epoch in comparison to SGD. 
+
+The pseudo-code for this first modified epoch is given by : 
+
+\paragraph{}
+\begin{algorithm}[H]
+\caption{SDCA Perm}
+\SetAlgoLined
+Set $w^{(0)} = 0$\;
+  	\For{$t = 1$ to $n$}{
+  	Find $\alpha_t$ to maximize $- \phi_t^{\star}(-\alpha_t) - \frac{\lambda t}{2} ||w^{(t-1)} + (\lambda t)^{-1} \alpha_t x_t ||^2$\;
+  	$w^{(t)} = \frac{1}{\lambda t} \sum_{i=1}^t \alpha_i x_i$\;
+  	}
+\end{algorithm}
+
+
+
+\paragraph{}
+Since the closed form for the step of maximization is not given in \cite{1}, we proceed to the computations : 
+
+At each step $t \in \{1,..., n \}$ of the epoch, we wish to find $\alpha_t$ that maximizes : 
+$$ - \phi_t^{\star}(-\alpha_t) - \frac{\lambda t}{2} ||w^{(t-1)} + (\lambda t)^{-1} \alpha_t x_t ||^2$$
+
+Let us remark first of all that we must take $\alpha_t$ to be such that $\alpha_t y_t \in [0, 1]$ since if this is not the case, $- \phi_t^{\star}(-\alpha_t) = - \infty$. 
+
+Now supposing that $\alpha_t y_t \in [0, 1]$, developping the previous expression yields : 
+$$ \alpha_t y_t - \frac{\lambda t}{2} ( ||w^{(t-1)}||^2 + 2 \frac{\alpha_t}{\lambda t} \langle w^{(t-1)}, x_t \rangle + \frac{\alpha_t^2}{\lambda^2 t^2}||x_t||^2 )$$
+
+This is a second order polynomial in $\alpha_t$. With a negative coefficient on the second order term. Thus this is concave. Setting the derivative to 0 w.r.t $\alpha_t$ yields : 
+
+$$ y_t - \langle w^{(t-1)}, x_t \rangle - \frac{\alpha_t}{\lambda t}||x_t||^2  = 0$$
+
+
+This gives us an optimal $\alpha_t$ : $\alpha_t^{\star}$ defined by :  
+$$ \alpha_t^{\star} = \frac{\lambda t}{||x_t||^2} (y_t - x_t^T w^{(t-1)})$$
+
+Let us now ensure that we threshold this value to make sure that $\alpha_t y_t \in [0, 1]$: The optimal value is thus $\tilde{\alpha_t}$:
+\begin{eqnarray*}
+    \tilde{\alpha_t} &=& \alpha_t^{\star} ~if~\alpha_t^{\star} y_t \in [0, 1] \\
+    \tilde{\alpha_t} &=& \min(0, y_t)~if~\alpha_t^{\star} < \min(0, y_t)\\
+    \tilde{\alpha_t} &=& \max(0, y_t)~if~\alpha_t^{\star} > \max(0, y_t)\\
+\end{eqnarray*}
+
 \printbibliography
 
 \end{document}
