@@ -1,0 +1,121 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{biblio.bib}
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{algorithm2e}
+
+\begin{document}
+
+\title{%
+  SDCA \cite{2} vs. Pegasos \cite{1} for linear SVM fitting \\
+  \large Applications to blood cells classification}
+
+\author{Dimitri Bouche, Cyril Verluise}
+
+\maketitle
+
+\section{Introduction}
+
+The aim of this project is to compare two optimization algorithms on the particular problem of fitting a linear SVM :
+
+\begin{itemize}
+	\item Stochastic dual coordinate ascent (SDCA) \cite{2} which is a stochastic version of a Dual coordinate ascent (DCA).
+	\item Primal estimated subgradient solver for SVM (Pegasos) \cite{1} which corresponds to a classic stochastic (sub)gradient descent (SGD) with a given choice of step-size.
+\end{itemize}
+
+As a reminder, the linear (regularized) SVM problem is the following :
+
+\begin{equation}\label{P}
+\min_{w \in \mathbb{R}^d} P(w).
+\end{equation}
+
+Where : $$P(w) = \left [ \frac{1}{n} \sum_{i=1}^n \phi_i (w^T x_i) + \frac{\lambda}{2} || w ||^2 \right ].$$
+
+
+$d$ being the number of features, $n$ the number of data points and $\phi_i$ the hinge loss : 
+$$\phi_i(w^T x_i) = \max(0, 1 - y_iw^Tx_i).$$
+
+With $y_i \in \{-1, 1\}$ being $x_i$'s label.
+
+\paragraph{}
+
+Regarding theorethical guarantees, the Pegasos algorithm is stated to be faster by \cite{1} yielding an $\epsilon$ suboptimal result in $\mathcal{O}(\frac{1}{\lambda \epsilon})$ (independant from the size of dataset) whereas the SDCA algorithm is said to yield such result in $\mathcal{O}(n + \frac{1}{\lambda \epsilon})$ \cite{2}, although it is argued that the latter can reach more precise results.
+
+\paragraph{}
+We will start by a short presentation of the two procedures and will then apply them both to the same problem of image classification (bloodcells classification) in order to see to what extent those theoretical guarantees apply in practise.
+
+\section{SDCA}
+
+We are here bound to paraphrase \cite{1}, so we will only state the updates formula that are of interest to us and perform the computations only when the closed form formula are not given (for instance for the SGD initialization).
+
+\subsection{SDCA-perm}
+
+\paragraph{}
+We focus here on the dual of problem (\ref{P}) : 
+
+\begin{equation}\label{D}
+\max_{\alpha \in \mathbb{R}^n} D(\alpha).
+\end{equation}
+
+Where : 
+$$D(\alpha) = \left [ \frac{1}{n} \sum_{i=1}^n - \phi_i^{\star} (-\alpha_i) - \frac{\lambda}{2} \left \Vert \frac{1}{\lambda n} \sum_{i=1}^n \alpha_i x_i\right \Vert ^2 \right ].$$
+
+With $ \phi_i^{\star}$ defined as : 
+
+\begin{eqnarray*}
+\phi_i^{\star} (-a) &=& -ay_i ~if~ ay_i \in [0, 1]\\
+\phi_i^{\star} (-a) &=& + \infty ~if~ ay_i \notin [0, 1]
+\end{eqnarray*}
+
+\paragraph{}
+Solving problem (\ref{D}) is equivalent to solving problem (\ref{P}), since any solution to (\ref{D}) can be transformed into a solution to (\ref{P}) using the following function \cite{1} : 
+$$ w(\alpha) = \frac{1}{\lambda n} \sum_{i=1}^n \alpha_i x_i$$
+
+
+
+
+
+We implemented the SDCA-perm version, which runs in epochs instead of employing complete randomization. We also add a stopping criterion on the duality gap $P(w(\alpha)) - D(\alpha)$ as advised by the authors. 
+
+
+However, we do not apply the "Random option" (returning a randomly chosen value of $\alpha$ among the second half iterations) nor the "Average option" (returning the average value of $\alpha$ over the second half iterations) since it works very well in practice without. The pseudo code for our implementation is the following : 
+
+\paragraph{}
+\begin{algorithm}[H]
+\caption{SDCA Perm}
+\SetAlgoLined
+\KwData{$\alpha^{(0)}$,~$k_{max}$,~$\epsilon$}
+Set ~$w^{(0)} = w(\alpha^{(0)})$\;
+Set $g= P(w^{(0)} ) - D(\alpha^{(0)})$\;
+
+ \While{$g > \epsilon$ and $k < k_{max}$}{
+  Draw $\{i_1,..., i_n \}$ random permutation of $\{1,...,n \}$\;
+  	\For{$j = 1$ to $n$}{
+  		$i = i_j$\;
+  		$t \leftarrow t+1$\;
+  		$\Delta_i = \Delta_i (\alpha_i^{(t-1)}, w^{(t-1)})$\;
+  		$\alpha ^{(t)} \leftarrow \alpha ^{(t-1)} + \Delta_i e_i$\;
+  		$w^{(t)} \leftarrow w^{(t-1)} + \frac{1}{\lambda n} \Delta_i x_i$ \;
+  	}
+  	$k \leftarrow k + 1$\;
+ }
+\end{algorithm}
+
+\paragraph{}
+With $e_i$ the vector with $1$ in the $i$-th position and $0$s elsewhere, and $\Delta_i$ the coordinate update chosen to decrease the dual objective as given in \cite{1}:
+
+$$\Delta_i (\alpha_i^{(t-1)}, w^{(t-1)}) = y_i \max \left ( 0, \min \left ( 1, \frac{(\lambda n) (1 - x_i^Tw^{(t-1)}y_i)}{||x_i||^2} + \alpha_i^{(t-1)}y_i \right ) \right ) - \alpha_i^{(t-1)}.$$
+
+
+\subsection{SGD initialization}
+
+\printbibliography
+
+\end{document}
