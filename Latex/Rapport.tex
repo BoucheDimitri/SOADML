@@ -7,6 +7,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfig}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{algorithm2e}
@@ -20,6 +22,9 @@
 \author{Dimitri Bouche, Cyril Verluise}
 
 \maketitle
+
+\tableofcontents
+\newpage
 
 \section{Introduction}
 
@@ -46,16 +51,19 @@ With $y_i \in \{-1, 1\}$ being $x_i$'s label.
 
 \paragraph{}
 
-Regarding theorethical guarantees, the Pegasos algorithm is stated to be faster by \cite{1} yielding an $\epsilon$ suboptimal result in $\mathcal{O}(\frac{1}{\lambda \epsilon})$ (independant from the size of dataset) whereas the SDCA algorithm is said to yield such result in $\mathcal{O}(n + \frac{1}{\lambda \epsilon})$ \cite{2}, although it is argued that the latter can reach more precise results.
+Regarding theorethical guarantees, the Pegasos algorithm is stated to be faster by \cite{1} yielding an $\epsilon$ suboptimal result in $\mathcal{O}(\frac{1}{\lambda \epsilon})$ or less (independant from the size of dataset) whereas the SDCA algorithm is said to yield such result in $\mathcal{O}(n + \frac{1}{\lambda \epsilon})$ or less \cite{2}, although it is argued that the latter can reach more precise results.
 
 \paragraph{}
 We will start by a short presentation of the two procedures and will then apply them both to the same problem of image classification (bloodcells classification) in order to see to what extent those theoretical guarantees apply in practise.
 
-\section{SDCA}
+
+\section{Brief presentation of the two algorithms}
+
+\subsection{SDCA}
 
 We are here bound to paraphrase \cite{1}, so we will only state the updates formula that are of interest to us and perform the computations only when the closed form formula are not given (for instance for the SGD initialization).
 
-\subsection{SDCA-perm}
+\subsubsection{SDCA-perm}
 
 \paragraph{}
 We focus here on the dual of problem (\ref{P}) : 
@@ -82,7 +90,7 @@ $$ w(\alpha) = \frac{1}{\lambda n} \sum_{i=1}^n \alpha_i x_i$$
 
 
 
-We implemented the SDCA-perm version, which runs in epochs instead of employing complete randomization. We also add a stopping criterion on the duality gap $P(w(\alpha)) - D(\alpha)$ as advised by the authors. 
+We implemented the SDCA-perm version, which runs in epochs instead of employing complete randomization. We also add a stopping criterion based on the duality gap $P(w(\alpha)) - D(\alpha)$ as advised by the authors. 
 
 
 However, we do not apply the "Random option" (returning a randomly chosen value of $\alpha$ among the second half iterations) nor the "Average option" (returning the average value of $\alpha$ over the second half iterations) since it works very well in practice without. The pseudo code for our implementation is the following : 
@@ -91,9 +99,10 @@ However, we do not apply the "Random option" (returning a randomly chosen value 
 \begin{algorithm}[H]
 \caption{SDCA Perm}
 \SetAlgoLined
-\KwData{$\alpha^{(0)}$,~$k_{max}$,~$\epsilon$}
+\KwData{$\alpha^{(0)}$,~$k_{max}$ (maximum number of epochs),~$\epsilon$ (duality gap stopping threshold)}
 Set ~$w^{(0)} = w(\alpha^{(0)})$\;
 Set $g= P(w^{(0)} ) - D(\alpha^{(0)})$\;
+Set $k = 0$\;
 
  \While{$g > \epsilon$ and $k < k_{max}$}{
   Draw $\{i_1,..., i_n \}$ random permutation of $\{1,...,n \}$\;
@@ -114,15 +123,15 @@ With $e_i$ the vector with $1$ in the $i$-th position and $0$s elsewhere, and $\
 $$\Delta_i (\alpha_i^{(t-1)}, w^{(t-1)}) = y_i \max \left ( 0, \min \left ( 1, \frac{(\lambda n) (1 - x_i^Tw^{(t-1)}y_i)}{||x_i||^2} + \alpha_i^{(t-1)}y_i \right ) \right ) - \alpha_i^{(t-1)}.$$
 
 
-\subsection{SGD initialization}
+\subsubsection{SGD initialization}
 
-It is advised in \cite{1} to implement a different algorithm based on a modification of stochastic subgradient descent (SGD) just for the first epoch and then to switch back to SDCA. This is useful because SDCA tends to result in updates that are too small in the first epoch in comparison to SGD. 
+It is advised in \cite{1} to implement a different algorithm based on a modification of stochastic subgradient descent (SGD) just for the first epoch and then to switch back to SDCA. This is useful according to the authors because SDCA tends to perform updates that are too small in the first epoch in comparison to SGD. 
 
 The pseudo-code for this first modified epoch is given by : 
 
 \paragraph{}
 \begin{algorithm}[H]
-\caption{SDCA Perm}
+\caption{Modified SGD}
 \SetAlgoLined
 Set $w^{(0)} = 0$\;
   	\For{$t = 1$ to $n$}{
@@ -137,27 +146,138 @@ Set $w^{(0)} = 0$\;
 Since the closed form for the step of maximization is not given in \cite{1}, we proceed to the computations : 
 
 At each step $t \in \{1,..., n \}$ of the epoch, we wish to find $\alpha_t$ that maximizes : 
-$$ - \phi_t^{\star}(-\alpha_t) - \frac{\lambda t}{2} ||w^{(t-1)} + (\lambda t)^{-1} \alpha_t x_t ||^2$$
+$$ - \phi_t^{\star}(-\alpha_t) - \frac{\lambda t}{2} ||w^{(t-1)} + (\lambda t)^{-1} \alpha_t x_t ||^2.$$
 
 Let us remark first of all that we must take $\alpha_t$ to be such that $\alpha_t y_t \in [0, 1]$ since if this is not the case, $- \phi_t^{\star}(-\alpha_t) = - \infty$. 
 
 Now supposing that $\alpha_t y_t \in [0, 1]$, developping the previous expression yields : 
-$$ \alpha_t y_t - \frac{\lambda t}{2} ( ||w^{(t-1)}||^2 + 2 \frac{\alpha_t}{\lambda t} \langle w^{(t-1)}, x_t \rangle + \frac{\alpha_t^2}{\lambda^2 t^2}||x_t||^2 )$$
+$$ \alpha_t y_t - \frac{\lambda t}{2} \Big ( ||w^{(t-1)}||^2 + 2 \frac{\alpha_t}{\lambda t} \langle w^{(t-1)}, x_t \rangle + \frac{\alpha_t^2}{\lambda^2 t^2}||x_t||^2 \Big).$$
 
-This is a second order polynomial in $\alpha_t$. With a negative coefficient on the second order term. Thus this is concave. Setting the derivative to 0 w.r.t $\alpha_t$ yields : 
+This is a second order polynomial in $\alpha_t$. With a negative coefficient on the second order term. Thus this is concave. Setting the derivative to 0 with respect to $\alpha_t$ : 
 
-$$ y_t - \langle w^{(t-1)}, x_t \rangle - \frac{\alpha_t}{\lambda t}||x_t||^2  = 0$$
+$$ y_t - \langle w^{(t-1)}, x_t \rangle - \frac{\alpha_t}{\lambda t}||x_t||^2  = 0.$$
 
 
 This gives us an optimal $\alpha_t$ : $\alpha_t^{\star}$ defined by :  
-$$ \alpha_t^{\star} = \frac{\lambda t}{||x_t||^2} (y_t - x_t^T w^{(t-1)})$$
+$$ \alpha_t^{\star} = \frac{\lambda t}{||x_t||^2} (y_t - x_t^T w^{(t-1)}).$$
 
-Let us now ensure that we threshold this value to make sure that $\alpha_t y_t \in [0, 1]$: The optimal value is thus $\tilde{\alpha_t}$:
+Let us now ensure that we threshold this value to make sure that it stays within the interval $[0, 1]$: The optimal thresholded value is thus $\tilde{\alpha_t}$:
 \begin{eqnarray*}
     \tilde{\alpha_t} &=& \alpha_t^{\star} ~if~\alpha_t^{\star} y_t \in [0, 1] \\
     \tilde{\alpha_t} &=& \min(0, y_t)~if~\alpha_t^{\star} < \min(0, y_t)\\
     \tilde{\alpha_t} &=& \max(0, y_t)~if~\alpha_t^{\star} > \max(0, y_t)\\
 \end{eqnarray*}
+
+
+\paragraph{}
+Summing up, the first epoch is performed using Modified-SGD (\textbf{Algorithm 2}) and then use the resulting $\alpha$ as initial value for SDCA-Perm (\textbf{Algorithm 1}).
+
+
+\subsection{Pegasos}
+
+\paragraph{}
+For this algorithm we have implemented almost exactly the mini-batch version from \cite{1}, the only difference being that we run it in epochs which is not the case in the paper. All the closed forms are given by the authors, we thus only gives the pseudo-code that we implemented : 
+
+
+\paragraph{}
+\begin{algorithm}[H]
+\caption{Mini-batch Pegasos running in epochs}
+\SetAlgoLined
+\KwData{$m$ (mini-batch size),~$k_{max}$ (number of epochs)}
+Set ~$w^{(0)} = 0$\;
+Set ~$t = 0$\;
+ \For {$k=0$ to $k_{max} - 1$}{
+  Draw $\{A_1,..., A_j \}$ random partition of $\{1,...,n \}$ where $|A_i| = m,~~ \forall i \in \{1,...,j \}$\;
+  	\For{$i = 1$ to $j$}{
+  		$A_i^+ = \{l \in A_i : y_i x_i^T w^{(t)} < 1 \}$\;
+  		$\eta_t = \frac{1}{\lambda n}$\;
+  		$ w^{(t + 1)} = (1 - \eta_t \lambda ) w^{(t)} + \frac{\eta_t}{k} \sum_{l \in A_i^+} y_l x_l$\;
+  		$t \leftarrow t + 1$\;
+  	}
+ }
+\end{algorithm}
+
+\paragraph{}
+\textit{Remark : we assumed that $n$ is a multiple of $m$ for clarity as trivial modifications can be made if it is not the case.}
+
+
+\section{Application to bloodcells classification}
+
+\subsection{Bloodcells images dataset}
+
+\begin{figure}[!tbp]\label{originals}
+  \centering
+  \subfloat[Neutrophils]{\includegraphics[width=0.5\textwidth]{Graphs/Neutrophils_originals.pdf}\label{fig:f1}}
+  \hfill
+  \subfloat[Lymphocytes]{\includegraphics[width=0.5\textwidth]{Graphs/Lymphocytes_originals.pdf}\label{fig:f2}}
+  \caption{Examples for both classes}\label{originals}
+\end{figure}
+
+
+\paragraph{}
+The dataset consists in microscopic pictures of different kind of bloocells, it is available on Kaggle \cite{3}. There are four cells types in the dataset : Eosonophil, Lymphocyte, Monocyte, Neutrophil. We only concerned ourselves with a binary classification between Lymphocyte and Neutrophil. Since the images contain other cells in the background and since we are using a linear method, we made the choice of simplicity. To the human eye, the distinction between Lymphocytes and Neutrophils is the simplest since the former look "uni-nuclear" whereas the latter looks "poly-nuclear" (see \textbf{Figure \ref{originals}}) , so we thought this configuration was the most likely to work.
+
+\paragraph{}
+We have indeed a problem regarding the focus of the images, since the cell of interest is never at the same position in the images so we have to do a little pre-processing. We thus cropped the images around the centre of cell of interest. In order to do so, we used the image processing library \textbf{opencv}. We applied the following procedure using this library to find the center (the details can be found in our image processing notebook): 
+\begin{enumerate}
+	\item Blur the original image to make the main contours clearer.
+	\item Convert the blurred image to grayscale.
+	\item Neutralize the black pixels generated by framing issues by given them the value of the average pixel of the rest of the image.
+	\item Apply thresholding so that everything becomes white except the nucleus of the cell of interest.
+	\item Apply negative morphology operation to remove the remaining "pepper noise".
+	\item Find the center of cell by averaging the coordinates of the non white pixels and crop images around that center.
+\end{enumerate}
+
+The previous procedure applied to an example can be seen in \textbf{Figure  \ref{find_centre}}. Examples of automatically cropped images can be seen in \textbf{Figure \ref{cropped}}. We take the negative of the images so that the pixels of interest (the nucleus) are white and thus have the higher numerical values. From now on we used the transformed dataset containaing the cropped version of all the images, in grayscale and in negative.
+
+
+
+\subsection {SDCA vs Pegasos directly on the cropped images}
+
+We flatten the images in order to work on vectors instead of matrices, our cropped images are $120 \times 120$ pixels thus we are working with vectors in $\mathbb{R}^{120\times120} = \mathbb{R}^{14400}$. Since we have only $n=4982$ distributed approximately evenly between our two classes, that is a lot of features to learn. We plot some of the quantities of interest in \textbf{Figure \ref{comparison_original}}
+
+We set $\lambda = 1.7$ after a few tries (we did not perform cross-validation). 
+
+
+\begin{figure}[!tbp]
+  \centering
+  \subfloat[Loss (log scale) as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/logloss_cpu_original_mc100.pdf}}
+  \hfill
+  \subfloat[Error rate on test set as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/error_epoch_original_mc100.pdf}}
+  \hfill
+  %\subfloat[Duality gap for SDCA as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/duality_original_mc100.pdf}}
+  \caption{SDCA vs Pegasos - cropped vectorized images - averaged over 100 runs of each}\label{comparison_original}
+\end{figure}
+
+
+\paragraph{}
+SDCA with modified SGD initialization is actually a lot faster than Pegasos, after only the $2$nd epoch, SDCA has almost converged whereas Pegasos is still struggling. In term of CPU execution time, we timed only the updates for each epoch (meaning that all the extra computations coming from tracking losses, tracking score on test set etc... do not count in the CPU timer).
+
+We deliberately set the duality gap stopping criterion too low for SDCA in order to have the same number of epochs for the two algorithms but if we set it to $\epsilon=0.001$, SDCA stops early around the $4$th epoch.
+
+
+
+
+\appendix
+
+\begin{figure}[!tbp]
+  \centering
+  \includegraphics[width=1\textwidth]{Graphs/Find_center.pdf}
+  \caption{Automatic cropping procedure}\label{find_centre}
+\end{figure}
+
+
+\begin{figure}[!tbp]
+  \centering
+  \subfloat[Cropped neutrophils]{\includegraphics[width=0.5\textwidth]{Graphs/Cropped_neutrophils.pdf}}
+  \hfill
+  \subfloat[Cropped lymphocytes]{\includegraphics[width=0.5\textwidth]{Graphs/Cropped_lymphocytes.pdf}}
+  \caption{Automatically cropped images for both classes}\label{cropped}
+\end{figure}
+
+
+
+
 
 \printbibliography
 
