@@ -241,20 +241,6 @@ def cum_loss_dual(alpha, xmat, y, lamb, lossfunc=hinge):
     return cumlossdual - reg
 
 
-# In[14]:
-
-
-# Test for those few first functions
-w_test = np.array([1, 1])
-w_test = w_test.reshape((2, 1))
-a = xmatT_dot_w(w_test, xmat)
-h = vector_hinge_loss(a, y)
-cumloss = cum_loss(w_test, xmat, y, 1)
-n = xmat.shape[1]
-alpha_test = 0.5 * np.ones((n,))
-cum_loss_dual(alpha_test, xmat, y, 1)
-
-
 # In[15]:
 
 
@@ -453,8 +439,6 @@ def sdca_perm(alpha0,
               nepochs,
               epsilon,
               lossfunc=hinge,
-              T=0,
-              return_opt=None,
               sgd_first=True,
               xtest=None,
               ytest=None):
@@ -482,6 +466,7 @@ def sdca_perm(alpha0,
 
     # Initialization of epochs counter
     k = 0
+    gap = gaps_track[k]
 
     # Perform SGD as first epoch if sgd_first is set to True
     if sgd_first:
@@ -815,7 +800,7 @@ losses_sdca, perfs_sdca, gaps_sdca, scores_sdca = mc_comparisons_sdca(xtrain,
                                                                       ytest,
                                                                       nmc=100,
                                                                       epsilon=0.000001,
-                                                                      sgd_first=True)
+                                                                      sgd_first=False)
 
 losses_pegasos, perfs_pegasos, scores_pegasos = mc_comparisons_pegasos(
     xtrain, ytrain, lamb, minibatch_pegasos, nepochs_pegasos, xtest, ytest, 100)
@@ -827,7 +812,7 @@ w_sdca, alpha_sdca, losses_sdca, perfs_sdca, gaps_sdca, scores_sdca = sdca_perm(
                                                                                 lamb,
                                                                                 nepochs_sdca,
                                                                                 0.0001,
-                                                                                sgd_first=True,
+                                                                                sgd_first=False,
                                                                                 xtest=xtest,
                                                                                 ytest=ytest)
 print(np.sum(perfs_sdca))
@@ -837,6 +822,15 @@ losses_pegasos, perfs_pegasos, scores_pegasos = pegasos_algorithm(
     w_pegasos, xtrain, ytrain, lamb, minibatch_pegasos, nepochs_pegasos, xtest=xtest, ytest=ytest)
 print(np.sum(perfs_pegasos))
 
+
+losses_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/losses_sdca.txt')
+perfs_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/perfs_sdca.txt')
+gaps_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/gaps_sdca.txt')
+scores_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/scores_sdca.txt')
+
+losses_pegasos = np.loadtxt(os.getcwd() + '/Dumps/losses_pegasos.txt')
+perfs_pegasos = np.loadtxt(os.getcwd() + '/Dumps/perfs_pegasos.txt')
+scores_pegasos = np.loadtxt(os.getcwd() + '/Dumps/scores_pegasos.txt')
 
 # In[145]:
 
@@ -853,12 +847,17 @@ axes[0].legend(fontsize=35)
 axes[0].tick_params(axis='both', which='major', labelsize=32)
 axes[0].tick_params(axis='both', which='minor', labelsize=32)
 
-plt.semilogy(np.cumsum(perfs_sdca), losses_sdca, label="SDCA", linewidth=8)
+plt.semilogy(np.cumsum(perfs_sdca_sgd), losses_sdca_sgd, label="SGD 1st + SDCA", linewidth=6)
 plt.semilogy(
     np.cumsum(perfs_pegasos),
     losses_pegasos,
     label="Pegasos",
-    linewidth=8)
+    linewidth=6)
+plt.semilogy(
+    np.cumsum(perfs_sdca),
+    losses_sdca,
+    label="SDCA",
+    linewidth=6)
 plt.ylabel("Loss (log scale)", fontsize=38)
 plt.xlabel("CPU time (s)", fontsize=38)
 plt.legend(fontsize=38)
@@ -883,8 +882,9 @@ print(metrics.f1_score(ypred, ytest))
 # In[147]:
 
 
-plt.plot(scores_sdca, label="SDCA", linewidth=8)
-plt.plot(scores_pegasos, label="Pegasos", linewidth=8)
+plt.plot(scores_sdca_sgd, label="SGD 1st + SDCA", linewidth=6)
+plt.plot(scores_pegasos, label="Pegasos", linewidth=6)
+plt.plot(scores_sdca, label="SDCA", linewidth=6)
 # plt.title("Evolution of 0-1 score on test set")
 plt.legend(fontsize=38)
 plt.xlabel("Epoch", fontsize=38)
@@ -897,11 +897,13 @@ plt.tick_params(axis='both', which='minor', labelsize=35)
 
 
 # Plots duality gap
-plt.plot(gaps_sdca)
+plt.plot(gaps_sdca, label="SDCA", linewidth=6)
+plt.plot(gaps_sdca_sgd, label="SGD 1st + SDCA", linewidth=6)
 # plt.title("SDCA : monitoring duality gaps")
-plt.ylabel("Duality gap", fontsize=18)
-plt.xlabel("Epoch", fontsize=18)
-plt.tick_params(axis='both', which='major', labelsize=18)
+plt.legend(fontsize=38)
+plt.ylabel("Duality gap", fontsize=38)
+plt.xlabel("Epoch", fontsize=38)
+plt.tick_params(axis='both', which='major', labelsize=35)
 plt.savefig(output_path + "Noisy_Duality_SGD.svg")
 
 

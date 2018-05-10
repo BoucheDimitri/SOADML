@@ -48,3 +48,13 @@
 \contentsline {subsection}{\numberline {3.2}SDCA vs Pegasos directly on the cropped images}{5}
 \defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{6}

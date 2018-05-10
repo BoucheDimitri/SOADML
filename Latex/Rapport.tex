@@ -234,40 +234,50 @@ The previous procedure applied to an example can be seen in \textbf{Figure  \ref
 
 \subsection {SDCA vs Pegasos directly on the cropped images}
 
-We flatten the images in order to work on vectors instead of matrices, our cropped images are $120 \times 120$ pixels thus we are working with vectors in $\mathbb{R}^{120\times120} = \mathbb{R}^{14400}$. Since we have only $n=4982$ distributed approximately evenly between our two classes, that is a lot of features to learn. We plot some of the quantities of interest in \textbf{Figure \ref{comparison_original}}
+We flatten the images in order to work on vectors instead of matrices, our cropped images are $120 \times 120$ pixels thus we are working with vectors in $\mathbb{R}^{120\times120} = \mathbb{R}^{14400}$. We have only $n=4982$ distributed approximately evenly between our two classes.
 
-We set $\lambda = 1.7$ after a few tries (we did not perform cross-validation). 
+
+\paragraph{}
+Since the two algorithm are stochastic, in order to perform a fair comparison we ran them each 100 times and then we averaged the evolution of losses, the CPU performances and the test scores. In term of CPU execution time, we timed only the updates for each epoch (meaning that all the extra computations coming from tracking losses, tracking score on test set etc... do not count in the CPU timer). We ran SDCA both with and without the modified-SGD first epoch. The results can be seen in \textbf{Figure \ref{comparison_original}}.
 
 
 \begin{figure}[!tbp]
   \centering
-  \subfloat[Loss (log scale) as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/logloss_cpu_original_mc100.pdf}}
+  \subfloat[Loss (log scale) as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/logloss_cpu_original3_mc100.pdf}}
   \hfill
-  \subfloat[Error rate on test set as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/error_epoch_original_mc100.pdf}}
+  \subfloat[Error rate on test set as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/error_epoch_original3_mc100.pdf}}
   \hfill
   %\subfloat[Duality gap for SDCA as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/duality_original_mc100.pdf}}
-  \caption{SDCA vs Pegasos - cropped vectorized images - averaged over 100 runs of each}\label{comparison_original}
+  \caption{SDCA vs Pegasos - cropped vectorized images - averaged over 100 runs of each - $\lambda = 1.6$}\label{comparison_original}
 \end{figure}
+
+\paragraph{}
+\textit{Remark 1: we deliberately called our time measure "CPU time" and not just "time" because under Linux, the Python timer do not return the wall clock - as it does under Windows - but rather the CPU time consumed for the execution of the timed task only}.
+
+\paragraph{}
+\textit{Remark 2: we deliberately set the duality gap stopping criterion to $0$ to be sure that all algorithms run for the same number of epochs to avoid averaging over lists of different sizes. Although the decrease in the duality gaps are plotted in the appendix in }.
 
 
 \paragraph{}
-SDCA with modified SGD initialization is actually a lot faster than Pegasos, after only the $2$nd epoch, SDCA has almost converged whereas Pegasos is still struggling. In term of CPU execution time, we timed only the updates for each epoch (meaning that all the extra computations coming from tracking losses, tracking score on test set etc... do not count in the CPU timer).
-
-We deliberately set the duality gap stopping criterion too low for SDCA in order to have the same number of epochs for the two algorithms but if we set it to $\epsilon=0.001$, SDCA stops early around the $4$th epoch.
+Panel \textbf{(a)} of \textbf{Figure \ref{comparison_original}} represents the loss as a function of cumulated CPU time. We can see that SDCA (with and without SGD as first epoch) is actually a lot faster than Pegasos, the latter taking $\approx$ 3 times longer to reach convergence than the former.  If we look at the panel \textbf{(b)} of the same figure, SDCA and SDCA with SGD reach the best score ($\approx$ 26 \%) after only 2 epochs, whereas Pegasos stabilizes itself around the 4-th epoch. 
 
 
+\paragraph{}
+To finish with, the modified-SGD epoch brings faster loss reduction in the first epoch but the improvement does not translate in terms of score on the test set where the two version of SDCA have exactly the same performances. 
 
+\paragraph{}
+The data used for this comparison is very noisy, and we have way more dimensions than data points ($d>>n$). This may cause poor sub-gradient estimation in Pegasos. For that matter it seems that SDCA is more robust than Pegasos, maybe it is what the authors of \cite{1} means by "more precise". We will now take the comparison to an easier context by performing dimensionnality reduction by applying principal component analysis (PCA) to our vectorized images. 
 
 \appendix
 
-\begin{figure}[!tbp]
+\begin{figure}
   \centering
   \includegraphics[width=1\textwidth]{Graphs/Find_center.pdf}
   \caption{Automatic cropping procedure}\label{find_centre}
 \end{figure}
 
 
-\begin{figure}[!tbp]
+\begin{figure}
   \centering
   \subfloat[Cropped neutrophils]{\includegraphics[width=0.5\textwidth]{Graphs/Cropped_neutrophils.pdf}}
   \hfill
@@ -276,6 +286,11 @@ We deliberately set the duality gap stopping criterion too low for SDCA in order
 \end{figure}
 
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.6\textwidth]{Graphs/duality_original3_mc100.pdf}
+  \caption{Decrease in duality gaps - Cropped vectorized images - averaged over 100 runs - $\lambda = 1.6$}\label{find_centre}
+\end{figure}
 
 
 
