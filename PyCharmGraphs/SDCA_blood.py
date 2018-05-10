@@ -466,7 +466,7 @@ def sdca_perm(alpha0,
 
     # Initialization of epochs counter
     k = 0
-    gap = gaps_track[k]
+    gap = 2 * (epsilon + 1)
 
     # Perform SGD as first epoch if sgd_first is set to True
     if sgd_first:
@@ -586,7 +586,7 @@ def mc_comparisons_sdca(xtrain,
     w_sdca, alpha_sdca, losses_sdca, perfs_sdca, gaps_sdca, scores_sdca = sdca_perm(
         alpha0, xtrain, ytrain, lamb, nepochs, epsilon, sgd_first=sgd_first, xtest=xtest, ytest=ytest)
     losses_sdca = np.array(losses_sdca)
-    perfs_sdca = np.array(losses_sdca)
+    perfs_sdca = np.array(perfs_sdca)
     gaps_sdca = np.array(gaps_sdca)
     scores_sdca = np.array(scores_sdca)
     for i in range(1, nmc):
@@ -629,13 +629,13 @@ def mc_comparisons_pegasos(xtrain,
     for i in range(1, nmc):
         w_pegasos = np.zeros((d,))
         losses, perfs, scores = pegasos_algorithm(w_pegasos,
-                                                     xtrain,
-                                                     ytrain,
-                                                     lamb,
-                                                     minibatch,
-                                                     nepochs,
-                                                     xtest=xtest,
-                                                     ytest=ytest)
+                                                  xtrain,
+                                                  ytrain,
+                                                  lamb,
+                                                  minibatch,
+                                                  nepochs,
+                                                  xtest=xtest,
+                                                  ytest=ytest)
         losses_pegasos += np.array(losses)
         perfs_pegasos += np.array(perfs)
         scores_pegasos += np.array(scores)
@@ -847,7 +847,11 @@ axes[0].legend(fontsize=35)
 axes[0].tick_params(axis='both', which='major', labelsize=32)
 axes[0].tick_params(axis='both', which='minor', labelsize=32)
 
-plt.semilogy(np.cumsum(perfs_sdca_sgd), losses_sdca_sgd, label="SGD 1st + SDCA", linewidth=6)
+plt.semilogy(
+    np.cumsum(perfs_sdca_sgd),
+    losses_sdca_sgd,
+    label="SGD 1st + SDCA",
+    linewidth=6)
 plt.semilogy(
     np.cumsum(perfs_pegasos),
     losses_pegasos,
@@ -949,7 +953,7 @@ plt.show()
 # In[57]:
 
 
-def compute_pca(xmat, ncomps):
+def compute_pca(xmat, ncomps=None):
     pca = decomposition.PCA(
         n_components=ncomps,
         whiten=True,
@@ -969,7 +973,7 @@ def pca_dimension_reduction(pca, xmat):
 
 
 # Reduce dimension
-ncomps = 100
+ncomps = 40
 pca_xtrain = compute_pca(xtrain, ncomps)
 xtrain_reduced = pca_dimension_reduction(pca_xtrain, xtrain)
 # We project the test images onto the eigen vectors of the PCA computed on
@@ -1027,22 +1031,69 @@ fig.savefig(output_path + "Lymphocytes_PCA.svg")
 fig, axes = plt.subplots(3, 2)
 for i in range(0, 2):
     for j in range(0, 3):
+        axes[j, i].imshow(lymphocytes_transformed[:, 5 + i + \
+                          3 * j].reshape((120, 120)), "gray")
+
+
+# Plot some examples of cropped neutrophils images
+fig, axes = plt.subplots(3, 2)
+for i in range(0, 2):
+    for j in range(0, 3):
         axes[j, i].imshow(
             lymphocytes[:, 5 + i + 3 * j].reshape((120, 120)), "gray")
 # fig.savefig(output_path + "Neutrophils.svg")
 
 
+# Plot some examples of cropped neutrophils images
+fig, axes = plt.subplots(3, 2)
+for i in range(0, 2):
+    for j in range(0, 3):
+        axes[j, i].imshow(neutrophils_transformed[:, 10 + \
+                          i + 3 * j].reshape((120, 120)), "gray")
+
+
+# Plot some examples of cropped neutrophils images
+fig, axes = plt.subplots(3, 2)
+for i in range(0, 2):
+    for j in range(0, 3):
+        axes[j, i].imshow(
+            neutrophils[:, 10 + i + 3 * j].reshape((120, 120)), "gray")
+# fig.savefig(output_path + "Neutrophils.svg")
+
 # In[153]:
 
 
-lamb = 1.8
+lamb = 1.6
 d = xtrain_reduced.shape[0]
 n = xtrain_reduced.shape[1]
 alpha0 = np.zeros((n, ))
 w_pegasos = np.zeros((d, ))
-nepochs_sdca = 10
-nepochs_pegasos = 20
+nepochs_sdca = 5
+nepochs_pegasos = 5
 minibatch_pegasos = 100
+
+
+losses_sdca_sgd, perfs_sdca_sgd, gaps_sdca_sgd, scores_sdca_sgd = mc_comparisons_sdca(xtrain_reduced,
+                                                                                      ytrain,
+                                                                                      lamb,
+                                                                                      nepochs_sdca,
+                                                                                      xtest_reduced,
+                                                                                      ytest,
+                                                                                      nmc=100,
+                                                                                      epsilon=-1.0,
+                                                                                      sgd_first=True)
+losses_sdca, perfs_sdca, gaps_sdca, scores_sdca = mc_comparisons_sdca(xtrain_reduced,
+                                                                      ytrain,
+                                                                      lamb,
+                                                                      nepochs_sdca,
+                                                                      xtest_reduced,
+                                                                      ytest,
+                                                                      nmc=100,
+                                                                      epsilon=-1.0,
+                                                                      sgd_first=False)
+losses_pegasos, perfs_pegasos, scores_pegasos = mc_comparisons_pegasos(
+    xtrain_reduced, ytrain, lamb, minibatch_pegasos, nepochs_pegasos, xtest_reduced, ytest, 100)
+
 
 # SDCA epochs
 w_sdca, alpha_sdca, losses_sdca, perfs_sdca, gaps_sdca, scores_sdca = sdca_perm(alpha0,

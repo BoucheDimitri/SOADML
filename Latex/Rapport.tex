@@ -12,6 +12,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{algorithm2e}
+\usepackage[section]{placeins}
 
 \begin{document}
 
@@ -232,7 +233,7 @@ The previous procedure applied to an example can be seen in \textbf{Figure  \ref
 
 
 
-\subsection {SDCA vs Pegasos directly on the cropped images}
+\subsection {SDCA vs Pegasos on raw cropped images}
 
 We flatten the images in order to work on vectors instead of matrices, our cropped images are $120 \times 120$ pixels thus we are working with vectors in $\mathbb{R}^{120\times120} = \mathbb{R}^{14400}$. We have only $n=4982$ distributed approximately evenly between our two classes.
 
@@ -257,43 +258,104 @@ Since the two algorithm are stochastic, in order to perform a fair comparison we
 \paragraph{}
 \textit{Remark 2: we deliberately set the duality gap stopping criterion to $0$ to be sure that all algorithms run for the same number of epochs to avoid averaging over lists of different sizes. Although the decrease in the duality gaps are plotted in the appendix in }.
 
+\paragraph{}
+\textit{Remark 3 : after a few tries we set $\lambda=1.6$, although we did not cross-validate this. The minibatch size for Pegasos is set to 100.}
+
 
 \paragraph{}
 Panel \textbf{(a)} of \textbf{Figure \ref{comparison_original}} represents the loss as a function of cumulated CPU time. We can see that SDCA (with and without SGD as first epoch) is actually a lot faster than Pegasos, the latter taking $\approx$ 3 times longer to reach convergence than the former.  If we look at the panel \textbf{(b)} of the same figure, SDCA and SDCA with SGD reach the best score ($\approx$ 26 \%) after only 2 epochs, whereas Pegasos stabilizes itself around the 4-th epoch. 
 
 
 \paragraph{}
-To finish with, the modified-SGD epoch brings faster loss reduction in the first epoch but the improvement does not translate in terms of score on the test set where the two version of SDCA have exactly the same performances. 
+To finish with, the modified-SGD epoch brings faster loss reduction in the first epoch but the improvement does not translate in terms of score on the test set where the two version of SDCA have exactly the same performance to the point of looking as one and only curve. 
 
 \paragraph{}
-The data used for this comparison is very noisy, and we have way more dimensions than data points ($d>>n$). This may cause poor sub-gradient estimation in Pegasos. For that matter it seems that SDCA is more robust than Pegasos, maybe it is what the authors of \cite{1} means by "more precise". We will now take the comparison to an easier context by performing dimensionnality reduction by applying principal component analysis (PCA) to our vectorized images. 
+The data used for this comparison is very noisy (for one, there is lots of variations in the background of the images which carry no information) and we have way more dimensions than data points ($d>>n$). This may result in poor subgradient estimations in Pegasos. For that matter it seems that SDCA is more robust than Pegasos, maybe it is what the authors of \cite{1} means by "more precise". We will now take the comparison to an easier context by performing dimensionnality reduction by applying principal component analysis (PCA) to our vectorized images. 
+
+
+\FloatBarrier
+\subsection {SDCA vs Pegasos with PCA dimensionality reduction}
+
+We now run the same algorithms but we proceed to a PCA decomposition of the training set matrix. Looking at the plot of the resulting first 1000 singular values (see \textbf{Figure \ref{pca_decrease}} in the appendix) and since we want to cut out the effect of the background "noise" we keep only the coordinate of the projection on the principal components associated with the $40$ greater singular values, thus now $d=40$ and $d << n$. The representation of some images associated with this projection can be seen in \textbf{Figure \ref{pca_reduced}} in the appendix. As in the previous subsection, we average over 100 runs of the algorithms.
+
+
+
+
+\begin{figure}[!tbp]
+  \centering
+  \subfloat[Loss (log scale) as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/logloss_cpu_pca3_mc100.pdf}}
+  \hfill
+  \subfloat[Error rate on test set as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/error_epoch_pca3_mc100.pdf}}
+  \hfill
+  %\subfloat[Duality gap for SDCA as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/duality_original_mc100.pdf}}
+  \caption{SDCA vs Pegasos - PCA reduced (40) - averaged over 100 runs - $\lambda = 1.6$}\label{comparison_pca}
+\end{figure}
+
+
+\paragraph{}
+We can see in \textbf{Figure \ref{comparison_pca}}that, as opposed to the previous configuration (raw vectorized images), all three algorithms behaves the same in terms of score on test set (see panel \textbf{(b)}). We may explain this by the dimension reduction, which hopefully cuts out some background noise. This may help reduce the variance in the estimation of the gradient.
+Also, panels \textbf{(a)} shows us that in this configuration, Pegasos runs its epoch way faster than both versions of SDCA. 
+
+%This is probably a mechanical effect of the dimension reduction. Pegasos is a primal algorithm so the number of computations and coordinate modifications per update scales in $d$ whereas SDCA performs both primal (in $d$) and dual updates 
+
+
+
+\paragraph{}
+Thus 
+
+\printbibliography
+
+\newpage
 
 \appendix
 
-\begin{figure}
+\FloatBarrier
+\section{Automatic cropping procedure}
+
+\begin{figure}[!htb]
   \centering
-  \includegraphics[width=1\textwidth]{Graphs/Find_center.pdf}
+  \includegraphics[width=0.85\textwidth]{Graphs/Find_center.pdf}
   \caption{Automatic cropping procedure}\label{find_centre}
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[!htb]
   \centering
-  \subfloat[Cropped neutrophils]{\includegraphics[width=0.5\textwidth]{Graphs/Cropped_neutrophils.pdf}}
+  \subfloat[Cropped neutrophils]{\includegraphics[width=0.4\textwidth]{Graphs/cropped_neutro.pdf}}
   \hfill
-  \subfloat[Cropped lymphocytes]{\includegraphics[width=0.5\textwidth]{Graphs/Cropped_lymphocytes.pdf}}
+  \subfloat[Cropped lymphocytes]{\includegraphics[width=0.42\textwidth]{Graphs/cropped_lymph.pdf}}
   \caption{Automatically cropped images for both classes}\label{cropped}
 \end{figure}
 
+\newpage
 
-\begin{figure}
+\FloatBarrier
+
+\section{SDCA duality gaps}
+
+\begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.6\textwidth]{Graphs/duality_original3_mc100.pdf}
+	\includegraphics[width=0.55\textwidth]{Graphs/duality_original3_mc100.pdf}
   \caption{Decrease in duality gaps - Cropped vectorized images - averaged over 100 runs - $\lambda = 1.6$}\label{find_centre}
 \end{figure}
 
+\FloatBarrier
+\section{PCA transformed}
+
+\begin{figure}[!htb]
+  \centering
+  \subfloat[Cropped neutrophils]{\includegraphics[width=0.36\textwidth]{Graphs/cropped_neutro_pca40.pdf}}
+  \hfill
+  \subfloat[Cropped lymphocytes]{\includegraphics[width=0.36\textwidth]{Graphs/cropped_lymph_pca40.pdf}}
+  \caption{PCA transformed images for both classes}\label{pca_reduced}
+\end{figure}
 
 
-\printbibliography
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.55\textwidth]{Graphs/pca_decrease.pdf}
+  \caption{Singular values decrease}\label{pca_decrease}
+\end{figure}
+
 
 \end{document}
