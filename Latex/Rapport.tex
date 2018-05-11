@@ -29,7 +29,7 @@
 
 \section{Introduction}
 
-The aim of this project is to compare two optimization algorithms on the particular problem of fitting a linear SVM :
+The aim of this project is to compare two optimization algorithms on the problem of linear support vector machine (SVM) fitting :
 
 \begin{itemize}
 	\item Stochastic dual coordinate ascent (SDCA) \cite{2} which is a stochastic version of a Dual coordinate ascent (DCA).
@@ -45,24 +45,24 @@ As a reminder, the linear (regularized) SVM problem is the following :
 Where : $$P(w) = \left [ \frac{1}{n} \sum_{i=1}^n \phi_i (w^T x_i) + \frac{\lambda}{2} || w ||^2 \right ].$$
 
 
-$d$ being the number of features, $n$ the number of data points and $\phi_i$ the hinge loss : 
+$d$ being the number of features, $n$ the number of data points, $\phi_i$ the hinge loss : 
 $$\phi_i(w^T x_i) = \max(0, 1 - y_iw^Tx_i).$$
 
-With $y_i \in \{-1, 1\}$ being $x_i$'s label.
+and $y_i \in \{-1, 1\}$ being $x_i$'s label.
 
 \paragraph{}
 
 Regarding theorethical guarantees, the Pegasos algorithm is stated to be faster by \cite{1} yielding an $\epsilon$ suboptimal result in $\mathcal{O}(\frac{1}{\lambda \epsilon})$ or less (independant from the size of dataset) whereas the SDCA algorithm is said to yield such result in $\mathcal{O}(n + \frac{1}{\lambda \epsilon})$ or less \cite{2}, although it is argued that the latter can reach more precise results.
 
 \paragraph{}
-We will start by a short presentation of the two procedures and will then apply them both to the same problem of image classification (bloodcells classification) in order to see to what extent those theoretical guarantees apply in practise.
+We will start by a short presentation of the two procedures and will then use them to fit a SVM on a dataset of images to perform binary classification (bloodcells classification).
 
 
 \section{Brief presentation of the two algorithms}
 
 \subsection{SDCA}
 
-We are here bound to paraphrase \cite{1}, so we will only state the updates formula that are of interest to us and perform the computations only when the closed form formula are not given (for instance for the SGD initialization).
+We are here bound to paraphrase \cite{1}, so we will only state the updates formula that are of interest to us and perform the computations only when the closed form formula for the SVM case are not given in the article (for instance for the modified-SGD initialization).
 
 \subsubsection{SDCA-perm}
 
@@ -91,10 +91,10 @@ $$ w(\alpha) = \frac{1}{\lambda n} \sum_{i=1}^n \alpha_i x_i$$
 
 
 
-We implemented the SDCA-perm version, which runs in epochs instead of employing complete randomization. We also add a stopping criterion based on the duality gap $P(w(\alpha)) - D(\alpha)$ as advised by the authors. 
+We implemented the SDCA-perm version, which runs in epochs instead of employing complete randomization. We also added a stopping criterion based on the duality gap $P(w(\alpha)) - D(\alpha)$ as advised by the authors. 
 
 
-However, we do not apply the "Random option" (returning a randomly chosen value of $\alpha$ among the second half iterations) nor the "Average option" (returning the average value of $\alpha$ over the second half iterations) since it works very well in practice without. The pseudo code for our implementation is the following : 
+However, we do not apply the "Random option" (returning a randomly chosen value of $\alpha$ among its value in the second half of the iterations) nor the "Average option" (returning the average value of $\alpha$ over the second half iterations) since it works very well in practice without. We thus avoid to record $\alpha$ at each step which speeds up execution. The pseudo code is the following : 
 
 \paragraph{}
 \begin{algorithm}[H]
@@ -149,7 +149,7 @@ Since the closed form for the step of maximization is not given in \cite{1}, we 
 At each step $t \in \{1,..., n \}$ of the epoch, we wish to find $\alpha_t$ that maximizes : 
 $$ - \phi_t^{\star}(-\alpha_t) - \frac{\lambda t}{2} ||w^{(t-1)} + (\lambda t)^{-1} \alpha_t x_t ||^2.$$
 
-Let us remark first of all that we must take $\alpha_t$ to be such that $\alpha_t y_t \in [0, 1]$ since if this is not the case, $- \phi_t^{\star}(-\alpha_t) = - \infty$. 
+Let us remark first of all that we must take $\alpha_t$ to be such that $\alpha_t y_t \in [0, 1]$ since if this is not the case, $- \phi_t^{\star}(-\alpha_t) = - \infty$, which would set the dual objective to $- \infty$.
 
 Now supposing that $\alpha_t y_t \in [0, 1]$, developping the previous expression yields : 
 $$ \alpha_t y_t - \frac{\lambda t}{2} \Big ( ||w^{(t-1)}||^2 + 2 \frac{\alpha_t}{\lambda t} \langle w^{(t-1)}, x_t \rangle + \frac{\alpha_t^2}{\lambda^2 t^2}||x_t||^2 \Big).$$
@@ -177,7 +177,7 @@ Summing up, the first epoch is performed using Modified-SGD (\textbf{Algorithm 2
 \subsection{Pegasos}
 
 \paragraph{}
-For this algorithm we have implemented almost exactly the mini-batch version from \cite{1}, the only difference being that we run it in epochs which is not the case in the paper. All the closed forms are given by the authors, we thus only gives the pseudo-code that we implemented : 
+For this algorithm we have implemented almost exactly the mini-batch version from \cite{1}, the only difference being that we run it in epochs which is not the case in the article. Apart from that, all the closed forms are given by the authors, we thus only present the pseudo-code we implemented : 
 
 
 \paragraph{}
@@ -216,26 +216,26 @@ Set ~$t = 0$\;
 
 
 \paragraph{}
-The dataset consists in microscopic pictures of different kind of bloocells, it is available on Kaggle \cite{3}. There are four cells types in the dataset : Eosonophil, Lymphocyte, Monocyte, Neutrophil. We only concerned ourselves with a binary classification between Lymphocyte and Neutrophil. Since the images contain other cells in the background and since we are using a linear method, we made the choice of simplicity. To the human eye, the distinction between Lymphocytes and Neutrophils is the simplest since the former look "uni-nuclear" whereas the latter looks "poly-nuclear" (see \textbf{Figure \ref{originals}}) , so we thought this configuration was the most likely to work.
+The dataset consists in microscopic pictures of different kind of bloocells, it is available on Kaggle \cite{3}. There are four cells types in the dataset : Eosonophil, Lymphocyte, Monocyte, Neutrophil. We only concerned ourselves with a binary classification between Lymphocyte and Neutrophil. Since the images contain other cells in the background and since we are using a linear method, we made the choice of simplicity. To the human eye, the distinction between Lymphocytes and Neutrophils is the simplest to figure out since the former look "uni-nuclear" whereas the latter looks "poly-nuclear" (see \textbf{Figure \ref{originals}}). As a consequence, we thought this configuration would be the most likely to work.
 
 \paragraph{}
-We have indeed a problem regarding the focus of the images, since the cell of interest is never at the same position in the images so we have to do a little pre-processing. We thus cropped the images around the centre of cell of interest. In order to do so, we used the image processing library \textbf{opencv}. We applied the following procedure using this library to find the center (the details can be found in our image processing notebook): 
+We have indeed a problem regarding the focus of the images (see \textbf{Figure \ref{originals}}), since the cell of interest (the purple one) is never located at the same place within the images so we have to do a little pre-processing. We thus designed a procedure to crop the images around the centre of the cell of interest. In order to do so, we used the image processing library \textbf{opencv}. Our procedure to find the center of the cell is the following (more details can be found in our image processing notebook): 
 \begin{enumerate}
-	\item Blur the original image to make the main contours clearer.
+	\item Blur the original image to make the contours of the cell of interest clearer and neutralize the contours of the other cells in the background.
 	\item Convert the blurred image to grayscale.
-	\item Neutralize the black pixels generated by framing issues by given them the value of the average pixel of the rest of the image.
+	\item Neutralize the black pixels generated by framing issues by giving them the value of the average pixel of the rest of the image.
 	\item Apply thresholding so that everything becomes white except the nucleus of the cell of interest.
 	\item Apply negative morphology operation to remove the remaining "pepper noise".
 	\item Find the center of cell by averaging the coordinates of the non white pixels and crop images around that center.
 \end{enumerate}
 
-The previous procedure applied to an example can be seen in \textbf{Figure  \ref{find_centre}}. Examples of automatically cropped images can be seen in \textbf{Figure \ref{cropped}}. We take the negative of the images so that the pixels of interest (the nucleus) are white and thus have the higher numerical values. From now on we used the transformed dataset containaing the cropped version of all the images, in grayscale and in negative.
+The previous procedure applied to an example can be seen in \textbf{Figure  \ref{find_centre}} in the appendix. Examples of automatically cropped images can be seen in \textbf{Figure \ref{cropped}} in the appendix. We take the negative of the images so that the pixels of interest (the nucleus) are white and thus have the higher numerical values. From now on we used the transformed dataset containaing the cropped version of all the images, in grayscale and in negative.
 
 
 
 \subsection {SDCA vs Pegasos on raw cropped images}
 
-We flatten the images in order to work on vectors instead of matrices, our cropped images are $120 \times 120$ pixels thus we are working with vectors in $\mathbb{R}^{120\times120} = \mathbb{R}^{14400}$. We have only $n=4982$ distributed approximately evenly between our two classes.
+We flatten the images in order to work on vectors instead of matrices. Our cropped images are $120 \times 120$ pixels thus we are working with vectors in $\mathbb{R}^{120\times120} = \mathbb{R}^{14400}$. We have only $n=4982$ distributed approximately evenly between our two classes.
 
 
 \paragraph{}
@@ -259,18 +259,18 @@ Since the two algorithm are stochastic, in order to perform a fair comparison we
 \textit{Remark 2: we deliberately set the duality gap stopping criterion to $0$ to be sure that all algorithms run for the same number of epochs to avoid averaging over lists of different sizes. Although the decrease in the duality gaps are plotted in the appendix in }.
 
 \paragraph{}
-\textit{Remark 3 : after a few tries we set $\lambda=1.6$, although we did not cross-validate this. The minibatch size for Pegasos is set to 100.}
+\textit{Remark 3: after a few tries we set $\lambda=1.6$, although we did not cross-validate this. The minibatch size for Pegasos is set to 100.}
 
 
 \paragraph{}
-Panel \textbf{(a)} of \textbf{Figure \ref{comparison_original}} represents the loss as a function of cumulated CPU time. We can see that SDCA (with and without SGD as first epoch) is actually a lot faster than Pegasos, the latter taking $\approx$ 3 times longer to reach convergence than the former.  If we look at the panel \textbf{(b)} of the same figure, SDCA and SDCA with SGD reach the best score ($\approx$ 26 \%) after only 2 epochs, whereas Pegasos stabilizes itself around the 4-th epoch. 
+Panel \textbf{(a)} of \textbf{Figure \ref{comparison_original}} represents the loss as a function of cumulated CPU time. We can see that SDCA (with and without SGD as first epoch) runs actually a lot faster than Pegasos, the latter taking $\approx$ 3 times longer to reach convergence than the former.  If we look at the panel \textbf{(b)} of the same figure, SDCA and SDCA with SGD reach the best score ($\approx$ 26 \%) after only 2 epochs, whereas Pegasos stabilizes itself around the 4-th epoch. 
 
 
 \paragraph{}
-To finish with, the modified-SGD epoch brings faster loss reduction in the first epoch but the improvement does not translate in terms of score on the test set where the two version of SDCA have exactly the same performance to the point of looking as one and only curve. 
+To finish with, the modified-SGD epoch brings faster loss reduction in the first epoch but the improvement does not translate in terms of score on the test set where the two version of SDCA have exactly the same performances.
 
 \paragraph{}
-The data used for this comparison is very noisy (for one, there is lots of variations in the background of the images which carry no information) and we have way more dimensions than data points ($d>>n$). This may result in poor subgradient estimations in Pegasos. For that matter it seems that SDCA is more robust than Pegasos, maybe it is what the authors of \cite{1} means by "more precise". We will now take the comparison to an easier context by performing dimensionnality reduction by applying principal component analysis (PCA) to our vectorized images. 
+The data used for this comparison is very noisy (for one, there are lots of variations in the background of the images which carry no information whatsoever) and we have way more dimensions than data points ($d>>n$). This may result in poor subgradient estimations in Pegasos. For that matter it seems that SDCA is more robust than Pegasos, maybe it is what the authors of \cite{1} means by "more precise". We will now take the comparison to an easier context by performing dimensionnality reduction using principal component analysis (PCA).
 
 
 \FloatBarrier
@@ -293,15 +293,16 @@ We now run the same algorithms but we proceed to a PCA decomposition of the trai
 
 
 \paragraph{}
-We can see in \textbf{Figure \ref{comparison_pca}}that, as opposed to the previous configuration (raw vectorized images), all three algorithms behaves the same in terms of score on test set (see panel \textbf{(b)}). We may explain this by the dimension reduction, which hopefully cuts out some background noise. This may help reduce the variance in the estimation of the gradient.
-Also, panels \textbf{(a)} shows us that in this configuration, Pegasos runs its epoch way faster than both versions of SDCA. 
+We can see in \textbf{Figure \ref{comparison_pca}} that, as opposed to the previous configuration (raw vectorized images), all three algorithms behaves the same in terms of score on test set (see panel \textbf{(b)}). We may explain this by the dimension reduction, which hopefully cuts out some background noise. This may help reduce the variance in the estimation of the gradient for Pegasos.
+
+\paragraph{}
+Also, panels \textbf{(a)} shows us that in this configuration, Pegasos runs its epochs way faster than both versions of SDCA. It probably because Pegasos is a primal algorithm so it performs its computations and updates in $\mathbb{R}^d$ whereas SDCA is a primal-dual algorithm so it performs both dual updates in $\mathbb{R}^n$ and primal updates in $\mathbb{R}^d$. Now that $d (=40) << n(\approx 5000)$, this is only logical to see Pegasos run faster. 
 
 %This is probably a mechanical effect of the dimension reduction. Pegasos is a primal algorithm so the number of computations and coordinate modifications per update scales in $d$ whereas SDCA performs both primal (in $d$) and dual updates 
 
+\section{Conclusions}
 
 
-\paragraph{}
-Thus 
 
 \printbibliography
 

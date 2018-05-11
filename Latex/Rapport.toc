@@ -45,7 +45,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.2}SDCA vs Pegasos on raw cropped images}{5}
+\contentsline {subsection}{\numberline {3.2}SDCA vs Pegasos on raw cropped images}{6}
 \defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{6}
 \defcounter {refsection}{0}\relax 
@@ -61,11 +61,13 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.3}SDCA vs Pegasos with PCA dimensionality reduction}{6}
+\contentsline {subsection}{\numberline {3.3}SDCA vs Pegasos with PCA dimensionality reduction}{7}
 \defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{7}
 \defcounter {refsection}{0}\relax 
 \contentsline {paragraph}{}{7}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {4}Conclusions}{7}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {A}Automatic cropping procedure}{8}
 \defcounter {refsection}{0}\relax 
