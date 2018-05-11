@@ -244,7 +244,7 @@ Since the two algorithm are stochastic, in order to perform a fair comparison we
 
 \begin{figure}[!tbp]
   \centering
-  \subfloat[Loss (log scale) as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/logloss_cpu_original3_mc100.pdf}}
+  \subfloat[Loss as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/loss_cpu_original3_mc100.pdf}}
   \hfill
   \subfloat[Error rate on test set as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/error_epoch_original3_mc100.pdf}}
   \hfill
@@ -283,7 +283,7 @@ We now run the same algorithms but we proceed to a PCA decomposition of the trai
 
 \begin{figure}[!tbp]
   \centering
-  \subfloat[Loss (log scale) as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/logloss_cpu_pca3_mc100.pdf}}
+  \subfloat[Loss as a function of CPU time on train set]{\includegraphics[width=0.5\textwidth]{Graphs/loss_cpu_pca3_mc100.pdf}}
   \hfill
   \subfloat[Error rate on test set as a function of number of epochs]{\includegraphics[width=0.5\textwidth]{Graphs/error_epoch_pca3_mc100.pdf}}
   \hfill
@@ -293,7 +293,7 @@ We now run the same algorithms but we proceed to a PCA decomposition of the trai
 
 
 \paragraph{}
-We can see in \textbf{Figure \ref{comparison_pca}} that, as opposed to the previous configuration (raw vectorized images), all three algorithms behaves the same in terms of score on test set (see panel \textbf{(b)}). We may explain this by the dimension reduction, which hopefully cuts out some background noise. This may help reduce the variance in the estimation of the gradient for Pegasos.
+We can see in \textbf{Figure \ref{comparison_pca}} that, as opposed to the previous configuration (raw vectorized images), all three algorithms behaves the same way in terms of score on test set (see panel \textbf{(b)}). We may explain this by the dimension reduction, which hopefully cuts out some background noise. This may help reduce the variance in the estimation of the gradient for Pegasos.
 
 \paragraph{}
 Also, panels \textbf{(a)} shows us that in this configuration, Pegasos runs its epochs way faster than both versions of SDCA. It probably because Pegasos is a primal algorithm so it performs its computations and updates in $\mathbb{R}^d$ whereas SDCA is a primal-dual algorithm so it performs both dual updates in $\mathbb{R}^n$ and primal updates in $\mathbb{R}^d$. Now that $d (=40) << n(\approx 5000)$, this is only logical to see Pegasos run faster. 
@@ -302,6 +302,8 @@ Also, panels \textbf{(a)} shows us that in this configuration, Pegasos runs its 
 
 \section{Conclusions}
 
+\paragraph{}
+In conclusion, we tried two settings : a very noisy and high dimensionnal context ($n << d$) and an easier one, with less background noise and more reasonnable dimensions ($n >> d$). SDCA performed way better than Pegasos in the first, whereas Pegasos performed way better than SDCA in the second. As a consequence SDCA seems to be more robust and precise but it is a primal dual algorithm so one must look at the relative values of $n$ and $d$ before making a choice. Pegasos on the other hand, seems to be more sensitive to noise but it runs amazingly fast when it is easy to estimate the gradient with low variance and when we have lots of data in comparison to the number of dimensions. 
 
 
 \printbibliography

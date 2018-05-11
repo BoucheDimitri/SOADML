@@ -828,6 +828,11 @@ perfs_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/perfs_sdca.txt')
 gaps_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/gaps_sdca.txt')
 scores_sdca_sgd = np.loadtxt(os.getcwd() + '/Dumps/scores_sdca.txt')
 
+losses_sdca = np.loadtxt(os.getcwd() + '/Dumps/losses_sdca_nosgd.txt')
+perfs_sdca = np.loadtxt(os.getcwd() + '/Dumps/perfs_sdca_nosgd.txt')
+gaps_sdca = np.loadtxt(os.getcwd() + '/Dumps/gaps_sdca_nosgd.txt')
+scores_sdca= np.loadtxt(os.getcwd() + '/Dumps/scores_sdca_nosgd.txt')
+
 losses_pegasos = np.loadtxt(os.getcwd() + '/Dumps/losses_pegasos.txt')
 perfs_pegasos = np.loadtxt(os.getcwd() + '/Dumps/perfs_pegasos.txt')
 scores_pegasos = np.loadtxt(os.getcwd() + '/Dumps/scores_pegasos.txt')
@@ -835,34 +840,39 @@ scores_pegasos = np.loadtxt(os.getcwd() + '/Dumps/scores_pegasos.txt')
 # In[145]:
 
 fig, axes = plt.subplots(2)
-axes[0].semilogy(np.cumsum(perfs_sdca), losses_sdca, label="SDCA", linewidth=8)
-axes[0].semilogy(
+axes[0].plot(np.cumsum(perfs_sdca_sgd), losses_sdca_sgd, label="SGD 1st + SDCA", linewidth=8)
+axes[0].plot(
     np.cumsum(perfs_pegasos),
     losses_pegasos,
     label="Pegasos",
     linewidth=8)
-axes[0].ylabel("Log loss", fontsize=35)
+axes[0].plot(
+    np.cumsum(perfs_sdca),
+    losses_sdca,
+    label="SDCA",
+    linewidth=8)
+axes[0].ylabel("Loss", fontsize=35)
 axes[0].xlabel("CPU time (s)", fontsize=35)
 axes[0].legend(fontsize=35)
 axes[0].tick_params(axis='both', which='major', labelsize=32)
 axes[0].tick_params(axis='both', which='minor', labelsize=32)
 
-plt.semilogy(
+plt.plot(
     np.cumsum(perfs_sdca_sgd),
     losses_sdca_sgd,
     label="SGD 1st + SDCA",
     linewidth=6)
-plt.semilogy(
+plt.plot(
     np.cumsum(perfs_pegasos),
     losses_pegasos,
     label="Pegasos",
     linewidth=6)
-plt.semilogy(
+plt.plot(
     np.cumsum(perfs_sdca),
     losses_sdca,
     label="SDCA",
     linewidth=6)
-plt.ylabel("Loss (log scale)", fontsize=38)
+plt.ylabel("Loss", fontsize=38)
 plt.xlabel("CPU time (s)", fontsize=38)
 plt.legend(fontsize=38)
 plt.tick_params(axis='both', which='major', labelsize=35)

@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" description="plt.ylabel(&quot;Loss (log scale)&quot;, fontsize=38)" line="860" />
+    <bookmark url="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" description="plt.ylabel(&quot;Loss (log scale)&quot;, fontsize=38)" line="870" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9a2755c6-7674-449c-a09a-66ad6fcf9399" name="Default" comment="" />
+    <list default="true" id="9a2755c6-7674-449c-a09a-66ad6fcf9399" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Latex/Graphs/Lymphocytes_originals.pdf" afterPath="$PROJECT_DIR$/Latex/Graphs/Lymphocytes_originals.pdf" />
+      <change beforePath="$PROJECT_DIR$/Latex/Graphs/Neutrophils_originals.pdf" afterPath="$PROJECT_DIR$/Latex/Graphs/Neutrophils_originals.pdf" />
+      <change beforePath="$PROJECT_DIR$/Latex/Rapport.pdf" afterPath="$PROJECT_DIR$/Latex/Rapport.pdf" />
+      <change beforePath="$PROJECT_DIR$/Latex/Rapport.tex" afterPath="$PROJECT_DIR$/Latex/Rapport.tex" />
+      <change beforePath="$PROJECT_DIR$/Latex/Rapport.toc" afterPath="$PROJECT_DIR$/Latex/Rapport.toc" />
+      <change beforePath="$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py" afterPath="$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py" />
+      <change beforePath="$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" afterPath="$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" />
+      <change beforePath="$PROJECT_DIR$/SDCA_blood.ipynb" afterPath="$PROJECT_DIR$/SDCA_blood.ipynb" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +27,8 @@
       <file leaf-file-name="ImagesProcessing.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="80" column="35" lean-forward="false" selection-start-line="80" selection-start-column="35" selection-end-line="80" selection-end-column="35" />
+            <state relative-caret-position="180">
+              <caret line="76" column="13" lean-forward="false" selection-start-line="76" selection-start-column="13" selection-end-line="76" selection-end-column="13" />
               <folding>
                 <element signature="e#29#47#0" expanded="true" />
               </folding>
@@ -29,8 +39,8 @@
       <file leaf-file-name="SDCA_blood.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-211">
-              <caret line="1046" column="0" lean-forward="false" selection-start-line="1046" selection-start-column="0" selection-end-line="1052" selection-end-column="0" />
+            <state relative-caret-position="133">
+              <caret line="859" column="0" lean-forward="false" selection-start-line="859" selection-start-column="0" selection-end-line="878" selection-end-column="57" />
               <folding>
                 <element signature="e#29#47#0" expanded="true" />
               </folding>
@@ -63,8 +73,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/PyCharmGraphs/GraphsIms.py" />
-        <option value="$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py" />
         <option value="$PROJECT_DIR$/SDCA_blood.ipynb" />
+        <option value="$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py" />
         <option value="$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" />
       </list>
     </option>
@@ -90,8 +100,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -108,6 +116,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="RecentsManager">
@@ -145,6 +155,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1857" height="1092" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -175,6 +186,33 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1332">
+          <caret line="80" column="35" lean-forward="false" selection-start-line="80" selection-start-column="35" selection-end-line="80" selection-end-column="35" />
+          <folding>
+            <element signature="e#29#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18684">
+          <caret line="1046" column="0" lean-forward="false" selection-start-line="1046" selection-start-column="0" selection-end-line="1052" selection-end-column="0" />
+          <folding>
+            <element signature="e#29#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SDCA_blood.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1332">
@@ -311,16 +349,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="80" column="35" lean-forward="false" selection-start-line="80" selection-start-column="35" selection-end-line="80" selection-end-column="35" />
-          <folding>
-            <element signature="e#29#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SDCA_blood.ipynb">
       <provider selected="true" editor-type-id="ipnb-editor">
         <state>
@@ -328,10 +356,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="76" column="13" lean-forward="false" selection-start-line="76" selection-start-column="13" selection-end-line="76" selection-end-column="13" />
+          <folding>
+            <element signature="e#29#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-211">
-          <caret line="1046" column="0" lean-forward="false" selection-start-line="1046" selection-start-column="0" selection-end-line="1052" selection-end-column="0" />
+        <state relative-caret-position="133">
+          <caret line="859" column="0" lean-forward="false" selection-start-line="859" selection-start-column="0" selection-end-line="878" selection-end-column="57" />
           <folding>
             <element signature="e#29#47#0" expanded="true" />
           </folding>

@@ -69,6 +69,8 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {4}Conclusions}{7}
 \defcounter {refsection}{0}\relax 
+\contentsline {paragraph}{}{7}
+\defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {A}Automatic cropping procedure}{8}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {B}SDCA duality gaps}{9}
