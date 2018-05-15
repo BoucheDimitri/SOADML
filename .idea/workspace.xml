@@ -4,17 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" description="plt.ylabel(&quot;Loss (log scale)&quot;, fontsize=38)" line="870" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9a2755c6-7674-449c-a09a-66ad6fcf9399" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Latex/Graphs/Lymphocytes_originals.pdf" afterPath="$PROJECT_DIR$/Latex/Graphs/Lymphocytes_originals.pdf" />
-      <change beforePath="$PROJECT_DIR$/Latex/Graphs/Neutrophils_originals.pdf" afterPath="$PROJECT_DIR$/Latex/Graphs/Neutrophils_originals.pdf" />
-      <change beforePath="$PROJECT_DIR$/Latex/Rapport.pdf" afterPath="$PROJECT_DIR$/Latex/Rapport.pdf" />
-      <change beforePath="$PROJECT_DIR$/Latex/Rapport.tex" afterPath="$PROJECT_DIR$/Latex/Rapport.tex" />
-      <change beforePath="$PROJECT_DIR$/Latex/Rapport.toc" afterPath="$PROJECT_DIR$/Latex/Rapport.toc" />
-      <change beforePath="$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py" afterPath="$PROJECT_DIR$/PyCharmGraphs/ImagesProcessing.py" />
-      <change beforePath="$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" afterPath="$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py" />
-      <change beforePath="$PROJECT_DIR$/SDCA_blood.ipynb" afterPath="$PROJECT_DIR$/SDCA_blood.ipynb" />
-    </list>
+    <list default="true" id="9a2755c6-7674-449c-a09a-66ad6fcf9399" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,7 +29,7 @@
       <file leaf-file-name="SDCA_blood.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
+            <state relative-caret-position="79">
               <caret line="859" column="0" lean-forward="false" selection-start-line="859" selection-start-column="0" selection-end-line="878" selection-end-column="57" />
               <folding>
                 <element signature="e#29#47#0" expanded="true" />
@@ -155,7 +145,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1857" height="1092" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -368,7 +357,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PyCharmGraphs/SDCA_blood.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
+        <state relative-caret-position="79">
           <caret line="859" column="0" lean-forward="false" selection-start-line="859" selection-start-column="0" selection-end-line="878" selection-end-column="57" />
           <folding>
             <element signature="e#29#47#0" expanded="true" />
